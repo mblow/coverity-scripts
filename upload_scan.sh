@@ -18,8 +18,7 @@ dir="$(pwd)/$(dirname $0)"
 work="${dir}/work/$1"
 devroot=$(cd ${dir}/../$1; pwd)
 
-. ${dir}/token.properties
-token=$(eval echo \$$1_token)
+token=$(cat ${dir}/$1.token)
 if [ -z "$token" ]; then
   echo "ERROR: cannot find token for $1"; exit 1
 fi
@@ -37,6 +36,9 @@ curl -v -# -o curl.out \
   --form token=$token \
   --form email=michael@michaelblow.com \
   --form file=@${archive_name} \
-  --form version="$(cd $devroot && git log | head -1 | awk '{ print $NF }') ($(cd $devroot && git branch | grep '^*' | awk '{print $NF}'))" \
+  --form version="$(cd $devroot && git log | head -1 | awk '{ print $NF }')" \
   --form description="${project} (Incubating) scan ($(date -u))" \
   https://scan.coverity.com/builds?project=${project_key}
+
+#  --form version="$(cd $devroot && git log | head -1 | awk '{ print $NF }') ($(cd $devroot && git branch | grep '^*' | awk '{print $NF}'))" \
+
