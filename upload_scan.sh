@@ -23,18 +23,19 @@ token=$(cat ${dir}/${project}.token)
 if [ -z "$token" ]; then
   echo "ERROR: cannot find token for ${project}" && exit 1
 fi
+rm -rf ${work}
+mkdir -p ${work}/cov-int 
+cd ${devroot}
+git pull
 version=$(cd $devroot && git log | head -1 | awk '{ print $NF }')
 if [ "$version" = "$(cat $dir/${project}.last_version)" ]; then
   echo "No new version, bypassing..."
   exit 0
 fi
 set -x
-rm -rf ${work}
-mkdir -p ${work}/cov-int 
-cd ${devroot}
-git pull
 mvn clean
-cov-build --dir ${work}/cov-int mvn -DskipTests=true install
+mvn dependency:go-offline
+cov-build --dir ${work}/cov-int mvn -o -DskipTests=true install
 cd ${work}
 tar czvf ${archive_name} cov-int
 
