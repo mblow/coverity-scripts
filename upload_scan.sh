@@ -39,7 +39,7 @@ cov-build --dir ${work}/cov-int mvn -o -DskipTests=true install
 cd ${work}
 tar czvf ${archive_name} cov-int
 
-curl -v -o curl.out \
+curl -o curl.out \
   --form token=$token \
   --form email=michael@michaelblow.com \
   --form file=@${archive_name} \
